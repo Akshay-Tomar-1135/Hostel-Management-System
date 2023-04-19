@@ -6,4 +6,7 @@
   if(!$result){
     echo mysqli_error($conn);
   }
+  else{
+    mysqli_commit($conn);
+  }
  ?>

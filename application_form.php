@@ -39,52 +39,7 @@
 <body>
 
 <!-- banner -->
-<div class="inner-page-banner" id="home"> 	   
-	<!--Header-->
-	<header>
-		<div class="container agile-banner_nav">
-			<nav class="navbar navbar-expand-lg navbar-light bg-light">
-				
-				<h1><a class="navbar-brand" href="home.php">NITC <span class="display"></span></a></h1>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-				</button>
-
-				<div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
-					<ul class="navbar-nav ml-auto">
-						<li class="nav-item">
-							<a class="nav-link" href="home.php">Home <span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item active">
-							<a class="nav-link" href="services.php">Hostels</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="contact.php">Contact</a>
-						</li>
-						<li class="nav-item">
-						<a class="nav-link" href="message_user.php">Message Received</a>
-					</li>
-						<li class="dropdown nav-item">
-						<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"><?php echo $_SESSION['roll']; ?>
-							<b class="caret"></b>
-						</a>
-						<ul class="dropdown-menu agile_short_dropdown">
-							<li>
-								<a href="profile.php">My Profile</a>
-							</li>
-							<li>
-								<a href="includes/logout.inc.php">Logout</a>
-							</li>
-						</ul>
-					</li>
-					</ul>
-				</div>
-			  
-			</nav>
-		</div>
-	</header>
-	<!--Header-->
-</div>
+<?php include 'header.php';?>
 <!-- //banner --> 
 
 <section class="contact py-5">
@@ -122,81 +77,12 @@
 </section>
 
 <!--footer-->
-<footer class="py-5">
-	<div class="container py-md-5">
-		<div class="footer-logo mb-5 text-center">
-			<a class="navbar-brand" href="http://nitc.ac.in" target="_blank">NIT <span class="display"> CALICUT</span></a>
-		</div>
-		<div class="footer-grid">
-			
-			<div class="list-footer">
-				<ul class="footer-nav text-center">
-					<li>
-						<a href="home.php">Home</a>
-					</li>
-					
-					<li>
-						<a href="services.php">Hostels</a>
-					</li>
-					<li>
-						<a href="contact.php">Contact</a>
-					</li>
-					<li>
-						<a href="profile.php">Profile</a>
-					</li>
-				</ul>
-			</div>
-			
-		</div>
-	</div>
-</footer>
+<?php include 'footer.php';?>
 <!-- footer -->
 
 <!-- js-scripts -->		
 
-	<!-- js -->
-	<script type="text/javascript" src="web_home/js/jquery-2.2.3.min.js"></script>
-	<script type="text/javascript" src="web_home/js/bootstrap.js"></script> <!-- Necessary-JavaScript-File-For-Bootstrap --> 
-	<!-- //js -->
-		
-	<!-- stats -->
-	<script src="web_home/js/jquery.waypoints.min.js"></script>
-	<script src="web_home/js/jquery.countup.js"></script>
-	<script>
-		$('.counter').countUp();
-	</script>
-	<!-- //stats -->
-
-	<!-- start-smoth-scrolling -->
-	<script src="web_home/js/SmoothScroll.min.js"></script>
-	<script type="text/javascript" src="web_home/js/move-top.js"></script>
-	<script type="text/javascript" src="web_home/js/easing.js"></script>
-	<script type="text/javascript">
-		jQuery(document).ready(function($) {
-			$(".scroll").click(function(event){		
-				event.preventDefault();
-				$('html,body').animate({scrollTop:$(this.hash).offset().top},1000);
-			});
-		});
-	</script>
-	<!-- here stars scrolling icon -->
-	<script type="text/javascript">
-		$(document).ready(function() {
-			/*
-				var defaults = {
-				containerID: 'toTop', // fading element id
-				containerHoverID: 'toTopHover', // fading element hover id
-				scrollSpeed: 1200,
-				easingType: 'linear' 
-				};
-			*/
-								
-			$().UItoTop({ easingType: 'easeOutQuart' });
-								
-			});
-	</script>
-	<!-- //here ends scrolling icon -->
-	<!-- start-smoth-scrolling -->
+	<?php require 'js-scripts.php';?>
 	
 <!-- //js-scripts -->
 

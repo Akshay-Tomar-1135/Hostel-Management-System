@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title> Intrend Interior Category Flat Bootstrap Responsive Website Template | Services : W3layouts</title>
+<title> Allocate rooms to students</title>
 	
 	<!-- Meta tag Keywords -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -42,68 +42,8 @@
 <body>
 
 <!-- banner -->
-<div class="inner-page-banner" id="home"> 	   
-	<!--Header-->
-	<header>
-		<div class="container agile-banner_nav">
-			<nav class="navbar navbar-expand-lg navbar-light bg-light">
-				
-				<h1><a class="navbar-brand" href="home_manager.php">NITC<span class="display"></span></a></h1>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-				</button>
-
-				<div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
-					<ul class="navbar-nav ml-auto">
-						<li class="nav-item">
-							<a class="nav-link" href="home_manager.php">Home <span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item">
-						<a class="nav-link" href="allocate_room.php">Allocate Room</a>
-					<li class="dropdown nav-item">
-						<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">Rooms
-							<b class="caret"></b>
-						</a>
-						<ul class="dropdown-menu agile_short_dropdown">
-							<li>
-								<a href="allocated_rooms.php">Allocated Rooms</a>
-							</li>
-							<li class="nav-item">
-						<a class="nav-link" href="message_hostel_manager.php">Messages Received</a>
-					</li>
-							<li>
-								<a href="empty_rooms.php">Empty Rooms</a>
-							</li>
-							<li>
-								<a href="vacate_rooms.php">Vacate Rooms</a>
-							</li>
-						</ul>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="contact_manager.php">Contact</a>
-					</li>
-					<li class="dropdown nav-item">
-						<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"><?php echo $_SESSION['username']; ?>
-							<b class="caret"></b>
-						</a>
-						<ul class="dropdown-menu agile_short_dropdown">
-							<li>
-								<a href="admin/manager_profile.php">My Profile</a>
-							</li>
-							<li>
-								<a href="includes/logout.inc.php">Logout</a>
-							</li>
-						</ul>
-					</li>
-					</ul>
-				</div>
-			</nav>
-		</div>
-	</header>
-	<!--Header-->
-</div>
+<?php include 'header_manager.php';?>
 <!-- //banner --> 
-<br><br><br>
 
 <section class="contact py-5">
 	<div class="container">
@@ -122,18 +62,21 @@
 	</div>
 </section>
 <?php
-   if (isset($_POST['search'])) {
-   	   $search_box = $_POST['search_box'];
-   	   /*echo "<script type='text/javascript'>alert('<?php echo $search_box; ?>')</script>";*/
-   	   $hostel_id = $_SESSION['hostel_id'];
-   	   $query_search = "SELECT * FROM Application WHERE Student_id like '$search_box%' and Hostel_id = '$hostel_id' and Application_status = '1'";
-   	   $result_search = mysqli_query($conn,$query_search);
+	if (isset($_POST['search'])) {
+		$search_box = $_POST['search_box'];
+		/*echo "<script type='text/javascript'>alert('<?php echo $search_box; ?>')</script>";*/
+		$hostel_id = $_SESSION['man_hostel_id'];
+		$query_search = "SELECT a.Student_id, CONCAT(s.Fname,' ',s.Lname) AS Student_name, h.Hostel_name, a.Message FROM Application as a, Hostel as h, Student as s WHERE a.Hostel_id = h.Hostel_id and a.Student_id = s.Student_id and a.Student_id like '%$search_box%' and a.Application_status = '1'";
+		if($_SESSION['isadmin']==0){
+			$query_search = "SELECT a.Student_id, CONCAT(s.Fname,' ',s.Lname) AS Student_name, h.Hostel_name, a.Message FROM Application as a, Hostel as h, Student as s WHERE a.Hostel_id = '$hostel_id' and a.Hostel_id = h.Hostel_id and a.Student_id = s.Student_id and a.Student_id like '%$search_box%' and a.Application_status = '1'";
+		}
+		$result_search = mysqli_query($conn,$query_search);
 
-   	   //select the hostel name from hostel table
-       $query6 = "SELECT * FROM Hostel WHERE Hostel_id = '$hostel_id'";
-       $result6 = mysqli_query($conn,$query6);
-       $row6 = mysqli_fetch_assoc($result6);
-       $hostel_name = $row6['Hostel_name'];
+		//select the hostel name from hostel table
+		// $query6 = "SELECT * FROM Hostel WHERE Hostel_id = '$hostel_id'";
+		// $result6 = mysqli_query($conn,$query6);
+		// $row6 = mysqli_fetch_assoc($result6);
+		// $hostel_name = $row6['Hostel_name'];
    	   ?>
    	   <div class="container">
    	   <table class="table table-hover">
@@ -147,42 +90,45 @@
     </thead>
     <tbody>
     <?php
-   	   if(mysqli_num_rows($result_search)==0){
-   	   	  echo '<tr><td colspan="4">No Rows Returned</td></tr>';
-   	   }
-   	   else{
-   	   	  while($row_search = mysqli_fetch_assoc($result_search)){
-      		//get the name of the student to display
-            $student_id = $row_search['Student_id'];
+		if(mysqli_num_rows($result_search)==0){
+			echo '<tr><td colspan="4">No Rows Returned</td></tr>';
+		}
+		else{
+			while($row_search = mysqli_fetch_assoc($result_search)){
+				//get the name of the student to display
+				// $student_id = $row_search['Student_id'];
 
-            $query7 = "SELECT * FROM Student WHERE Student_id = '$student_id'";
-            $result7 = mysqli_query($conn,$query7);
-            $row7 = mysqli_fetch_assoc($result7);
-            $student_name = $row7['Fname']." ".$row7['Lname'];
-            
-      		echo "<tr><td>{$student_name}</td><td>{$row_search['Student_id']}</td><td>{$hostel_name}</td><td>{$row_search['Message']}</td></tr>\n";
+				// $query7 = "SELECT * FROM Student WHERE Student_id = '$student_id'";
+				// $result7 = mysqli_query($conn,$query7);
+				// $row7 = mysqli_fetch_assoc($result7);
+				// $student_name = $row7['Fname']." ".$row7['Lname'];
+				
+				echo "<tr><td>{$row_search['Student_name']}</td><td>{$row_search['Student_id']}</td><td>{$row_search['Hostel_name']}</td><td>{$row_search['Message']}</td></tr>\n";
 
-   	   }
-   }
+				}
+   		}
    ?>
    </tbody>
   </table>
 </div>
 <?php
-}
+	}
   ?>
 
 <div class="container">
 <h2 class="heading text-capitalize mb-sm-5 mb-4"> Applications Received </h2>
 <?php
-   $hostel_id = $_SESSION['hostel_id'];
-   $query1 = "SELECT * FROM Application where Hostel_id = '$hostel_id' and Application_status = '1'";
-   $result1 = mysqli_query($conn,$query1);
-   //select the hostel name from hostel table
-   $query6 = "SELECT * FROM Hostel WHERE Hostel_id = '$hostel_id'";
-   $result6 = mysqli_query($conn,$query6);
-   $row6 = mysqli_fetch_assoc($result6);
-   $hostel_name = $row6['Hostel_name'];
+	$hostel_id = $_SESSION['man_hostel_id'];
+	$query1 = "SELECT a.Student_id, CONCAT(s.Fname,' ',s.Lname) AS Student_name, h.Hostel_name, h.Hostel_id, a.Message FROM Application as a, Hostel as h, Student as s WHERE a.Hostel_id = h.Hostel_id and a.Student_id = s.Student_id and a.Application_status = '1'";
+   	if($_SESSION['isadmin']==0){
+		$query1 = "SELECT a.Student_id, CONCAT(s.Fname,' ',s.Lname) AS Student_name, h.Hostel_name, h.Hostel_id, a.Message FROM Application as a, Hostel as h, Student as s WHERE a.Hostel_id = '$hostel_id' and a.Hostel_id = h.Hostel_id and a.Student_id = s.Student_id and a.Application_status = '1'";
+	}
+	$result1 = mysqli_query($conn,$query1);
+	//select the hostel name from hostel table
+	// $query6 = "SELECT * FROM Hostel WHERE Hostel_id = '$hostel_id'";
+	// $result6 = mysqli_query($conn,$query6);
+	// $row6 = mysqli_fetch_assoc($result6);
+	// $hostel_name = $row6['Hostel_name'];
 ?>
         
   <table class="table table-hover">
@@ -202,13 +148,13 @@
       else{
       	while($row1 = mysqli_fetch_assoc($result1)){
       		//get the name of the student to display
-            $student_id = $row1['Student_id']; 
-            $query7 = "SELECT * FROM Student WHERE Student_id = '$student_id'";
-            $result7 = mysqli_query($conn,$query7);
-            $row7 = mysqli_fetch_assoc($result7);
-            $student_name = $row7['Fname']." ".$row7['Lname'];
+            // $student_id = $row1['Student_id']; 
+            // $query7 = "SELECT * FROM Student WHERE Student_id = '$student_id'";
+            // $result7 = mysqli_query($conn,$query7);
+            // $row7 = mysqli_fetch_assoc($result7);
+            // $student_name = $row7['Fname']." ".$row7['Lname'];
             
-      		echo "<tr><td>{$student_name}</td><td>{$row1['Student_id']}</td><td>{$hostel_name}</td><td>{$row1['Message']}</td></tr>\n";
+      		echo "<tr><td>{$row1['Student_name']}</td><td>{$row1['Student_id']}</td><td>{$row1['Hostel_name']}</td><td>{$row1['Message']}</td></tr>\n";
       	}
       }
     ?>
@@ -228,44 +174,42 @@
 </section>
 <?php
 if(isset($_POST['submit'])){
-   $result1 = mysqli_query($conn,$query1);
-   
-   /*echo "<script type='text/javascript'>alert('<?php echo $room_no ?>')</script>";*/
-   while($row1 = mysqli_fetch_assoc($result1)){
-         //find the minimum room number
-     $query2 = "SELECT * FROM Room where Room_No = (SELECT MIN(Room_No) FROM Room where Allocated = '0' and Hostel_id = '$hostel_id')";
-     $result2 = mysqli_query($conn,$query2);
-     if(!$result2){
-     	   echo "<script type='text/javascript'>alert('Rooms not available')</script>";
-     	   exit();
-     }
-     $row2 = mysqli_fetch_assoc($result2);
-     $room_no = $row2['Room_No'];
+	$result1 = mysqli_query($conn,$query1);
+	
+	/*echo "<script type='text/javascript'>alert('<?php echo $room_no ?>')</script>";*/
+	while($row1 = mysqli_fetch_assoc($result1)){
+		//find the minimum room number
+		$hostel_id = $row1['Hostel_id'];
+		echo $hostel_id;
+		$query2 = "SELECT * FROM Room where Hostel_id = '$hostel_id' and Room_No = (SELECT MIN(Room_No) FROM Room where Allocated = '0' and Hostel_id = '$hostel_id')";
+		$result2 = mysqli_query($conn,$query2);
+		if(!$result2){
+			echo "<script type='text/javascript'>alert('Rooms not available')</script>";
+			exit();
+		}
+		$row2 = mysqli_fetch_assoc($result2);
+		$room_no = $row2['Room_No'];
 
-     $student_id = $row1['Student_id'];
-     $query3 = "UPDATE Application SET Application_status = '0',Room_No = '$room_no' WHERE Student_id = '$student_id'";
-     $result3 = mysqli_query($conn,$query3);
-     /*echo "<script type='text/javascript'>alert('<?php echo $result3; ?>')</script>";*/
-     if($result3){
-     	$room_id = $row2['Room_id'];
-     	$query4 = "UPDATE Student SET Hostel_id = '$hostel_id',Room_id = '$room_id' WHERE Student_id = '$student_id'";
-     	$result4 = mysqli_query($conn,$query4);
-     	if($result4){
-     		$query5 = "UPDATE Room SET Allocated = '1' where Room_id = '$room_id'";
-     		$result5 = mysqli_query($conn,$query5);
-     		if($result5){
-     		    echo "<script type='text/javascript'>alert('Rooms Allocated Successfully')</script>";	
-     		}
-     	}
-     	else{
-     		echo "<script type='text/javascript'>alert('Failed to allocate Rooms')</script>";
-     	}
-     }
-     else{
-     	echo "<script type='text/javascript'>alert('Failed to allocate Rooms')</script>";
-     }
+		$student_id = $row1['Student_id'];
+		$room_id = $row2['Room_id'];
+		$query3 = "UPDATE Application SET Application_status = '0',Room_No = '$room_no' WHERE Student_id = '$student_id'";
+		$result3 = mysqli_query($conn,$query3);
+		$query4 = "UPDATE Student SET Hostel_id = '$hostel_id',Room_id = '$room_id' WHERE Student_id = '$student_id'";
+		$result4 = mysqli_query($conn,$query4);
+		$query5 = "UPDATE Room SET Allocated = '1' where Room_id = '$room_id'";
+		$result5 = mysqli_query($conn,$query5);
+		/*echo "<script type='text/javascript'>alert('<?php echo $result3; ?>')</script>";*/
+		if($result3 && $result4 && $result5){
+			mysqli_commit($conn);
+			echo "<script type='text/javascript'>alert('Rooms Allocated Successfully')</script>";
+			header("Location: allocate_room.php");
+		}
+		else{
+			echo "<script type='text/javascript'>alert('Failed to allocate Rooms')</script>";
+			mysqli_rollback($conn);
+		}
 
-   }
+	}
    
 }
 ?>
@@ -274,90 +218,12 @@ if(isset($_POST['submit'])){
 <br>
 
 <!-- footer -->
-<footer class="py-5">
-	<div class="container py-md-5">
-		<div class="footer-logo mb-5 text-center">
-			<a class="navbar-brand"  href="http://www.nitc.ac.in/" target="_blank" >NIT<span class="display"> CALICUT</span></a>
-		</div>
-		<div class="footer-grid">
-			
-			<div class="list-footer">
-				<ul class="footer-nav text-center">
-					<li>
-						<a href="home_manager.php">Home</a>
-					</li>
-					<li>
-						<a href="allocate_room.php">Allocate</a>
-					</li>
-					
-					<li>
-						<a href="contact_manager.php">Contact</a>
-					</li>
-					<li>
-						<a href="admin/manager_profile.php">Profile</a>
-					</li>
-				</ul>
-			</div>
-			
-		</div>
-	</div>
-</footer>
+<?php include 'footer_manager.php';?>
 <!-- footer -->
 
 <!-- js-scripts -->
 
-	<!-- js -->
-	<script type="text/javascript" src="web_home/js/jquery-2.2.3.min.js"></script>
-	<script type="text/javascript" src="web_home/js/bootstrap.js"></script> <!-- Necessary-JavaScript-File-For-Bootstrap -->
-	<!-- //js -->
-
-	<!-- banner js -->
-	<script src="web_home/js/snap.svg-min.js"></script>
-	<script src="web_home/js/main.js"></script> <!-- Resource jQuery -->
-	<!-- //banner js -->
-
-	<!-- flexSlider --><!-- for testimonials -->
-	<script defer src="web_home/js/jquery.flexslider.js"></script>
-	<script type="text/javascript">
-		$(window).load(function(){
-		  $('.flexslider').flexslider({
-			animation: "slide",
-			start: function(slider){
-			  $('body').removeClass('loading');
-			}
-		  });
-		});
-	</script>
-	<!-- //flexSlider --><!-- for testimonials -->
-
-	<!-- start-smoth-scrolling -->
-	<script src="web_home/js/SmoothScroll.min.js"></script>
-	<script type="text/javascript" src="web_home/js/move-top.js"></script>
-	<script type="text/javascript" src="web_home/js/easing.js"></script>
-	<script type="text/javascript">
-		jQuery(document).ready(function($) {
-			$(".scroll").click(function(event){
-				event.preventDefault();
-				$('html,body').animate({scrollTop:$(this.hash).offset().top},1000);
-			});
-		});
-	</script>
-	<!-- here stars scrolling icon -->
-	<script type="text/javascript">
-		$(document).ready(function() {
-			/*
-				var defaults = {
-				containerID: 'toTop', // fading element id
-				containerHoverID: 'toTopHover', // fading element hover id
-				scrollSpeed: 1200,
-				easingType: 'linear'
-				};
-			*/
-
-			$().UItoTop({ easingType: 'easeOutQuart' });
-
-			});
-	</script>
+	<?php require 'js-scripts.php';?>
 	<!-- //here ends scrolling icon -->
 	<!-- start-smoth-scrolling -->
 

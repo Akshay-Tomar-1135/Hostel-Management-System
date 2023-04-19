@@ -5391,7 +5391,6 @@ button.close {
   padding: 0;
   background-color: transparent;
   border: 0;
-  -webkit-appearance: none;
 }
 
 .modal-open {

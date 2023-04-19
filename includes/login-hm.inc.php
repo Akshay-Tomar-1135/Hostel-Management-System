@@ -24,12 +24,12 @@ if (isset($_POST['login-submit'])) {
 
         //session_start();
         $_SESSION['hostel_man_id'] = $row['Hostel_man_id'];
-        $_SESSION['fname'] = $row['Fname'];
-        $_SESSION['lname'] = $row['Lname'];
-        $_SESSION['mob_no'] = $row['Mob_no'];
+        $_SESSION['man_fname'] = $row['Fname'];
+        $_SESSION['man_lname'] = $row['Lname'];
+        $_SESSION['man_mob_no'] = $row['Mob_no'];
         $_SESSION['username'] = $row['Username'];
-        $_SESSION['hostel_id'] = $row['Hostel_id'];
-        $_SESSION['email'] = $row['Email'];
+        $_SESSION['man_hostel_id'] = $row['Hostel_id'];
+        $_SESSION['man_email'] = $row['Email'];
         $_SESSION['isadmin'] = $row['Isadmin'];
         $_SESSION['PSWD'] = $row['Pwd'];
 
@@ -41,12 +41,12 @@ if (isset($_POST['login-submit'])) {
           echo "<script type='text/javascript'>alert('Not SET')</script>";
         }
         //echo $_SESSION['lname'];
-        if($_SESSION['isadmin']==0){
-          header("Location: ../home_manager.php?login=success");
-        }
-        else {
-          header("Location: ../admin/admin_home.php?login=success");
-        }
+        // if($_SESSION['isadmin']==0){
+        header("Location: ../home_manager.php?login=success");
+        // }
+        // else {
+        //   header("Location: ../admin/admin_home.php?login=success");
+        // }
         //exit();
       }
       else {

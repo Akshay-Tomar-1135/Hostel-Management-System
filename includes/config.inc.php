@@ -6,7 +6,7 @@
   $dBName = "hostel_management_system";
  // session_start();
   $conn=mysqli_connect($servername, $dBUsername, $dBPassword, $dBName);
-
+  mysqli_autocommit($conn, FALSE);
   if (!$conn) {
     die("Connection Failed: ".mysqli_connect_error());
   }
