@@ -27,14 +27,17 @@
                         </li>
                         <?php 
                         $student_id = $_SESSION['roll'];
-                        $query = "SELECT * FROM Application WHERE Student_id='$student_id' and Application_status='0' and Room_No IS NOT NULL ORDER BY Application_id DESC LIMIT 1";
+                        // $query = "SELECT * FROM Application WHERE Student_id='$student_id' and Application_status='0' and Room_No IS NOT NULL 
+                        // ORDER BY Application_id DESC LIMIT 1";
+                        $query = "SELECT * FROM Student WHERE Student_id='$student_id' and Hostel_id IS NOT NULL and Room_id IS NOT NULL";
                         $result = mysqli_query($conn, $query);
                         if($row = mysqli_fetch_assoc($result)){
                         ?>
                         <li class="nav-item">
-                            <a class="nav-link <?= ($activePage == 'invoice') ? 'active':''; ?>" href="invoice.php" target='_blank'>Print Invoice</a>
+                            <a class="nav-link" href="invoice.php" target='_blank'>Print Invoice</a>
                         </li>
                         <?php } ?>
+                        <?php if($activePage!='profile'){?>
                         <li class="dropdown nav-item">
                             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"><?php echo $_SESSION['roll']; ?>
                                 <b class="caret"></b>
@@ -43,8 +46,9 @@
                                 <li>
                                     <a href="profile.php">My Profile</a>
                                 </li>
+                            <?php } ?>
                                 <li>
-                                    <a href="includes/logout.inc.php">Logout</a>
+                                    <a <?php if($activePage=='profile'){?>class = "nav-link"<?php }?> href="includes/logout.inc.php">Logout</a>
                                 </li>
                             </ul>
                         </li>

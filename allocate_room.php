@@ -130,10 +130,11 @@
 	// $row6 = mysqli_fetch_assoc($result6);
 	// $hostel_name = $row6['Hostel_name'];
 ?>
-        
+ <form action="allocate_room.php" method="post">     
   <table class="table table-hover">
     <thead>
       <tr>
+	    <th>Select</th>
         <th>Student Name</th>
         <th>Student ID</th>
         <th>Hostel</th>
@@ -152,31 +153,36 @@
             // $query7 = "SELECT * FROM Student WHERE Student_id = '$student_id'";
             // $result7 = mysqli_query($conn,$query7);
             // $row7 = mysqli_fetch_assoc($result7);
-            // $student_name = $row7['Fname']." ".$row7['Lname'];
-            
-      		echo "<tr><td>{$row1['Student_name']}</td><td>{$row1['Student_id']}</td><td>{$row1['Hostel_name']}</td><td>{$row1['Message']}</td></tr>\n";
-      	}
+            // $student_name = $row1['Student_name'];
+           
+			// Output a row with a checkbox for each database row
+			echo "<tr><td><input type='checkbox' name='selected_rows[]' value='{$row1['Student_id']}' ></td><td>{$row1['Student_name']}</td><td>{$row1['Student_id']}</td><td>{$row1['Hostel_name']}</td><td>{$row1['Message']}</td></tr>\n";
+			// echo $row1['Application_id'];
+		  }
       }
     ?>
+
     </tbody>
   </table>
-</div>
-<section class="contact py-5">
-	<div class="container">
-			<div class="mail_grid_w3l">
-				<form action="allocate_room.php" method="post">
-					<div class="row"> 
-							<input type="submit" value="Allocate" name="submit">
+		<section class="contact py-5">
+			<div class="container ">
+					<div class="mail_grid_w3l">
+							<div class="row"> 
+								<input class="ml-1 mr-5 mt-5 mb-5" type="submit" value="Allocate" name="submit">
+								<div class="row"> 
+									<input class="m-5" type="submit" value="Cancel" name="submit">
+								</div>
+							</div>
 					</div>
-				</form>
 			</div>
-	</div>
-</section>
+		</section>
+</form>
+</div>
 <?php
-if(isset($_POST['submit'])){
+/*if(isset($_POST['submit']) && $_POST['submit'] === 'Cancel'){
 	$result1 = mysqli_query($conn,$query1);
 	
-	/*echo "<script type='text/javascript'>alert('<?php echo $room_no ?>')</script>";*/
+	/*echo "<script type='text/javascript'>alert('<?php echo $room_no ?>')</script>";
 	while($row1 = mysqli_fetch_assoc($result1)){
 		//find the minimum room number
 		$hostel_id = $row1['Hostel_id'];
@@ -198,7 +204,7 @@ if(isset($_POST['submit'])){
 		$result4 = mysqli_query($conn,$query4);
 		$query5 = "UPDATE Room SET Allocated = '1' where Room_id = '$room_id'";
 		$result5 = mysqli_query($conn,$query5);
-		/*echo "<script type='text/javascript'>alert('<?php echo $result3; ?>')</script>";*/
+		/*echo "<script type='text/javascript'>alert('<?php echo $result3; ?>')</script>";
 		if($result3 && $result4 && $result5){
 			mysqli_commit($conn);
 			echo "<script type='text/javascript'>alert('Rooms Allocated Successfully')</script>";
@@ -211,7 +217,197 @@ if(isset($_POST['submit'])){
 
 	}
    
+}*/
+if (isset($_POST['submit']) && $_POST['submit'] === 'Cancel') {
+	// process form data
+	if($_SERVER['REQUEST_METHOD'] == 'POST'){
+		// Get the array of selected checkbox values
+		$selected_rows = isset($_POST['selected_rows']) ? $_POST['selected_rows'] : array();
+		// print_r($selected_rows);
+		foreach($selected_rows as $selected) { // loop through the array
+			// $selected contains the value of the selected checkbox
+			// echo "Selected row: ".$selected."<br>";
+			//Get the mobile number of the student to send message //
+			$query11 = "SELECT * FROM Student where Student_id = '$selected' ";
+			
+			$result11 = mysqli_query($conn,$query11);
+    		$row11 = mysqli_fetch_assoc($result11);
+    		$phone_number = "+91" .$row11['Mob_no'];
+			$name = $row11['Fname'] . " " . $row11['Lname'];
+			$studentID = $selected;
+			$message = "Dear " . $name . " STUDENT ID ". $studentID . PHP_EOL . ". Your Application has been canceled by the Manager of IIITK. \n For any query contact to the Manager. \n Best Wishes \nIndian Institute of Information Technology Kalyani";
+			
+			// Do something with the selected row, such as deleting it from the database
+			$query = "DELETE FROM Application WHERE Student_id = '$selected'";
+			$result6 = mysqli_query($conn, $query);
+			if($result6){
+				mysqli_commit($conn);
+// <!--  *****************************************************************************************************  -->
+				// see https://getcomposer.org/doc/01-basic-usage.md
+				require_once 'vendor/autoload.php';
+				$sid    = "";
+				$token  = "";
+				$twilio = new Twilio\Rest\Client($sid, $token);
+				$from = "";
+				$message = $twilio->messages
+				->create($phone_number, // to
+				array(
+					"from" => $from,
+					"body" => $message
+					)
+				);
+				echo "Row with ID $selected was successfully deleted.";		
+				print($message->sid);
+// <!--  *****************************************************************************************************  -->
+			}else{
+				echo "Row with ID $selected not found.";
+				mysqli_rollback($conn);
+			}
+		}
+	  }
 }
+
+static $x = 1;
+static $y = 1;
+static $room_no = 0;
+static $room_id = 0;
+static $curr_room_no;
+static $no_of_students;
+if (isset($_POST['submit']) && $_POST['submit'] === 'Allocate') {
+    // form was submitted with the "Allocate" button
+	echo "Allocate pressed";
+	if($_SERVER['REQUEST_METHOD'] == 'POST'){
+		// Get the array of selected checkbox values
+		$selected_rows = isset($_POST['selected_rows']) ? $_POST['selected_rows'] : array();
+		// print_r($selected_rows);
+		foreach($selected_rows as $selected) { // loop through the array
+		  // $selected contains the value of the selected checkbox
+		  echo "Selected row: ".$selected."<br>";
+		  //Get the mobile number of the student to send message //
+		  	$query111 = "SELECT * FROM Application where Student_id = '$selected' ";
+
+			$result111 = mysqli_query($conn,$query111);
+    		$row111 = mysqli_fetch_assoc($result111);
+    		$phone_number = $row111['Mob_no'];
+			$student_id = $selected;
+			$hostel_id = $row111['Hostel_id'];
+			echo "hostel id = $hostel_id";
+
+			// Find the minimum available room number for the hostel
+			// Initialize the room no and room id
+			$query2 = "SELECT * FROM Room where Hostel_id = '$hostel_id' and Room_No = (SELECT MIN(Room_No) FROM Room where Allocated = '0' and Hostel_id = '$hostel_id')";
+		$result2 = mysqli_query($conn,$query2);
+		if(!$result2){
+			echo "<script type='text/javascript'>alert('Rooms not available')</script>";
+			exit();
+		}
+		$row2 = mysqli_fetch_assoc($result2);
+		$room_no = $row2['Room_No'];
+
+		$student_id = $row1['Student_id'];
+		$room_id = $row2['Room_id'];
+		$query3 = "UPDATE Application SET Application_status = '0',Room_No = '$room_no' WHERE Student_id = '$selected'";
+		$result3 = mysqli_query($conn,$query3);
+		$query4 = "UPDATE Student SET Hostel_id = '$hostel_id',Room_id = '$room_id' WHERE Student_id = '$selected'";
+		$result4 = mysqli_query($conn,$query4);
+		$query5 = "UPDATE Room SET Allocated = '1' where Room_id = '$room_id'";
+		$result5 = mysqli_query($conn,$query5);
+		/*echo "<script type='text/javascript'>alert('<?php echo $result3; ?>')</script>";*/
+		if($result3 && $result4 && $result5){
+			mysqli_commit($conn);
+			echo " Student Updated Sending Message";
+			// Send an SMS message to the student's mobile number with the allocated room number
+			// see https://getcomposer.org/doc/01-basic-usage.md
+			// require_once 'vendor/autoload.php';
+			// $sid    = "";
+			// $token  = "";
+			// $twilio = new Twilio\Rest\Client($sid, $token);
+			// $from = "";
+			// $message = $twilio->messages
+			// ->create($phone_number, // to
+			// array(
+			// 	"from" => $from,
+			// 	"body" => $message
+			// 	)
+			// );
+			// print($message->sid);
+			// if($message['success']){
+			// 	echo "<script type='text/javascript'>alert('Rooms Allocated Successfully. SMS sent to the student with room number.')</script>";
+			// }
+			echo "<script type='text/javascript'>alert('Rooms Allocated Successfully')</script>";
+			header("Location: allocate_room.php");
+		}
+		else{
+			echo "<script type='text/javascript'>alert('Failed to allocate Rooms')</script>";
+			mysqli_rollback($conn);
+		}
+			/*$query22 = "SELECT * FROM Hostel WHERE Hostel_id = '$hostel_id' AND current_no_of_rooms < No_of_rooms ";
+			$result22 = mysqli_query($conn,$query22);
+			if(!$result22){
+				echo "<script type='text/javascript'>alert('Rooms not available Finding for empty room')</script>";
+				$query2 = "SELECT * FROM Room WHERE Room_No = (SELECT MIN(Room_No) FROM Room WHERE  Allocated = '0' AND Hostel_id = '$hostel_id')";
+				$result2 = mysqli_query($conn,$query2);
+				if(!$result2){
+					echo "<script type='text/javascript'>alert('All the rooms are filled')</script>";
+					exit();
+				}else{
+					$row2 = mysqli_fetch_assoc($result2);
+					$room_no = $row2['Room_No']++;
+					$room_id = $row2['Room_id']++;
+					echo "Got room from Room DB \nStudent room_no =  $room_no and room_id = $room_id  and stuedent_id = $student_id ";
+				}
+			}else{
+				$row22 = mysqli_fetch_assoc($result22);
+				$curr_room_no = ++$row22['current_no_of_rooms'];
+				$no_of_students = ++$row22['No_of_students'];
+				$room_no = $x++;
+				$room_id = $y++;
+				echo "Got room from Hostel DB \nStudent room_no =  $room_no, room_id = $room_id, curr_room_no = $curr_room_no, no_of_students = $no_of_students  and stuedent_id = $student_id ";
+			}
+			// Update the Application and Student tables with the allocated room number
+			$query3 = "UPDATE Application SET Application_status = '0' , Room_No = '$room_no' WHERE Student_id = '$student_id'";
+			$result3 = mysqli_query($conn,$query3);
+			if($result3){
+				echo "Application : \nStudent room_no =  $room_no and room_id = $room_id  and stuedent_id = $student_id ";
+				$query5 = "UPDATE Room SET Allocated = '1' WHERE Room_id = '$room_id'";
+				$result5 = mysqli_query($conn,$query5);
+				if($result5){
+					echo "Room Updated";
+					$query41 = " UPDATE Student SET Hostel_id = '$hostel_id' , Room_id = '$room_id' WHERE Student_id = '$student_id' ";
+					$result41 = mysqli_query($conn,$query41);
+					if($result41){
+						echo " Student Updated Sending Message";
+						// Send an SMS message to the student's mobile number with the allocated room number
+						// see https://getcomposer.org/doc/01-basic-usage.md
+						// require_once 'vendor/autoload.php';
+						// $sid    = "";
+						// $token  = "";
+						// $twilio = new Twilio\Rest\Client($sid, $token);
+						// $from = "";
+						// $message = $twilio->messages
+						// ->create($phone_number, // to
+						// array(
+						// 	"from" => $from,
+						// 	"body" => $message
+						// 	)
+						// );
+						// print($message->sid);
+						// if($message['success']){
+						// 	echo "<script type='text/javascript'>alert('Rooms Allocated Successfully. SMS sent to the student with room number.')</script>";
+						// }
+					}
+				}
+				else{
+					echo "<script type='text/javascript'>alert('Failed to update student Allocated room')</script>";
+				}
+			}
+			else{
+				echo "<script type='text/javascript'>alert('Failed to allocate Rooms')</script>";
+			}*/
+		}
+	}
+}
+
 ?>
 <br>
 <br>

@@ -97,14 +97,19 @@
 				<th>Room No.</th>
 				<td><?php echo $row['Room_No'];?></td>
 			</tr>
-			<!-- <tr>
+      <?php $hostel_id = $_SESSION['hostel_id'];
+      $query="SELECT * FROM Hostel_manager WHERE Hostel_id='$hostel_id'";
+      $result = mysqli_query($conn, $query);
+      if($row = mysqli_fetch_assoc($result)){?>
+			<tr>
 				<th>Manager Name</th>
-				<td>Jane Smith</td>
+				<td><?php echo $row['Fname'].' '.$row['Lname'];?></td>
 			</tr>
 			<tr>
 				<th>Manager Phone No.</th>
-				<td>555-1234</td>
-			</tr> -->
+				<td><?php echo $row['Mob_no'];?></td>
+			</tr>
+      <?php } ?>
 		</table>
 		<a href="#" class="print-button" onclick="window.print()">Print Information</a>
 	</div>

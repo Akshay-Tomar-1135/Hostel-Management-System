@@ -51,9 +51,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 </head>
 <body>
-	<!-- banner -->
-		<div class="banner" id="home">
-			<div class="cd-radial-slider-wrapper">
 
 	<!--Header-->
 	<?php include 'header.php';?>
@@ -175,62 +172,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="clear"></div>
 					</div>
 			</fieldset>
-					<!--	<fieldset class="step wthree">
-						<legend>Work</legend>
-						<div class="work-w3agile">
-							<div class="work-w3agile-top">
-								<div class="agileits_w3layouts_work_grid1 w3layouts_work_grid1 hover14 column">
-									<div class="w3_agile_work_effect">
-										<ul>
-											<li>
-												<a href="web_profile/images/c1.jpg" class="sb" title="Quis Nostrud Exercitation Ullamco Laboris Quis Autem Vel Eum Iure Reprehenderit">
-													<figure>
-														<img src="web_profile/images/c1.jpg" alt=" " class="img-responsive" />
-													</figure>
-												</a>
-											</li>
-											<li>
-												<a href="web_profile/images/c2.jpg" class="sb" title="Quis Nostrud Exercitation Ullamco Laboris Quis Autem Vel Eum Iure Reprehenderit">
-													<figure>
-														<img src="web_profile/images/c2.jpg" alt=" " class="img-responsive" />
-													</figure>
-												</a>
-											</li>
-											<li>
-												<a href="web_profile/images/c3.jpg" class="sb" title="Quis Nostrud Exercitation Ullamco Laboris Quis Autem Vel Eum Iure Reprehenderit">
-													<figure>
-														<img src="web_profile/images/c3.jpg" alt=" " class="img-responsive" />
-													</figure>
-												</a>
-											</li>
-											<li>
-												<a href="web_profile/images/c4.jpg" class="sb" title="Quis Nostrud Exercitation Ullamco Laboris Quis Autem Vel Eum Iure Reprehenderit">
-													<figure>
-														<img src="web_profile/images/c4.jpg" alt=" " class="img-responsive" />
-													</figure>
-												</a>
-											</li>
-											<li>
-												<a href="web_profile/images/c5.jpg" class="sb" title="Quis Nostrud Exercitation Ullamco Laboris Quis Autem Vel Eum Iure Reprehenderit">
-													<figure>
-														<img src="web_profile/images/c5.jpg" alt=" " class="img-responsive" />
-													</figure>
-												</a>
-											</li>
-											<li>
-												<a href="web_profile/images/c6.jpg" class="sb" title="Quis Nostrud Exercitation Ullamco Laboris Quis Autem Vel Eum Iure Reprehenderit">
-													<figure>
-														<img src="web_profile/images/c6.jpg" alt=" " class="img-responsive" />
-													</figure>
-												</a>
-											</li>
-												<div class="clear"></div>
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
-					</fieldset>-->
 					<fieldset class="step agileinfo w3ls_fancy_step">
 						<legend>Hostel Manager Info</legend>
 						<div class="abt-agile">
@@ -245,17 +186,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										$hmfname = $row1['Fname'];
 										$hmlname = $row1['Lname'];
 										$hmMob  = $row1['Mob_no'];
-										$hmemail = $row1['Email'];
+										// $hmemail = $row1['Email'];
 									}
 									else {
 										$hmfname = 'none';
-										$hmlname = 'none';
+										$hmlname = '';
 										$hmMob  = 'none';
-										$hmemail = 'none';
+										// $hmemail = 'none';
 									}
 								 ?>
 								<h3><?php echo $hmfname." ".$hmlname; ?></h3>
-								<h5>Admin</h5>
+								<h5><?php if($row1['Isadmin']==0){echo "Manager";}else{echo "Admin";}?></h5>
 								<ul class="address">
 									<li>
 										<ul class="address-text">
@@ -263,12 +204,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 											<li>: <?php echo $hmMob; ?></li>
 										</ul>
 									</li>
-									<li>
+									<!-- <li>
 										<ul class="address-text">
 											<li><b>Email </b></li>
-											<li>: <?php echo $hmemail; ?></li>
+											<li>: <?php //echo $hmemail; ?></li>
 										</ul>
-									</li>
+									</li> -->
 								</ul>
 							</div>
 								<div class="clear"></div>
